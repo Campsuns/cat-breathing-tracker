@@ -116,19 +116,22 @@
     saveMsg.textContent = '';
   }
 
-  // Press/hold detection (mouse + touch)
-  function onPressStart(e) {
+  // Pointer events (unified for mouse + touch)
+  function onPointerDown(e) {
     if (state !== 'running') return;
     e.preventDefault();
+    // only respond to primary button / primary pointer
+    if (e.isPrimary === false) return;
     if (currentPressStart === null) {
       currentPressStart = performance.now();
       breathBtn.classList.add('holding');
       breathBtnLabel.textContent = 'Release = Exhale';
       setState('inhale (holding)');
+      try { breathBtn.setPointerCapture(e.pointerId); } catch (err) {}
     }
   }
 
-  function onPressEnd(e) {
+  function onPointerUp(e) {
     if (state !== 'running') return;
     e.preventDefault();
     if (currentPressStart !== null) {
@@ -140,16 +143,28 @@
       breathBtnLabel.textContent = 'Hold = Inhale';
       setState('exhale (released)');
       cycleCountEl.textContent = String(cycles.length);
+      try { breathBtn.releasePointerCapture(e.pointerId); } catch (err) {}
     }
   }
 
-  // Attach handlers
-  breathBtn.addEventListener('mousedown', onPressStart);
-  breathBtn.addEventListener('mouseup', onPressEnd);
-  breathBtn.addEventListener('mouseleave', onPressEnd);
-  breathBtn.addEventListener('touchstart', onPressStart, {passive:false});
-  breathBtn.addEventListener('touchend', onPressEnd, {passive:false});
-  breathBtn.addEventListener('touchcancel', onPressEnd, {passive:false});
+  function onPointerCancel(e) {
+    // treat as an end
+    onPointerUp(e);
+  }
+
+  // Attach pointer handlers (modern browsers)
+  breathBtn.addEventListener('pointerdown', onPointerDown);
+  breathBtn.addEventListener('pointerup', onPointerUp);
+  breathBtn.addEventListener('pointercancel', onPointerCancel);
+  breathBtn.addEventListener('lostpointercapture', onPointerCancel);
+
+  // Older fallback (shouldn't be necessary with pointer events present)
+  breathBtn.addEventListener('mousedown', (e) => { if(!window.PointerEvent) onPointerDown(e); });
+  breathBtn.addEventListener('mouseup', (e) => { if(!window.PointerEvent) onPointerUp(e); });
+  breathBtn.addEventListener('mouseleave', (e) => { if(!window.PointerEvent) onPointerCancel(e); });
+  breathBtn.addEventListener('touchstart', (e) => { if(!window.PointerEvent) onPointerDown(e); }, {passive:false});
+  breathBtn.addEventListener('touchend', (e) => { if(!window.PointerEvent) onPointerUp(e); }, {passive:false});
+  breathBtn.addEventListener('touchcancel', (e) => { if(!window.PointerEvent) onPointerCancel(e); }, {passive:false});
 
   startBtn.addEventListener('click', startCountdownThenRun);
 
@@ -162,9 +177,10 @@
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
+          // no date -> backend will auto-generate mm-dd-yy
           bpm,
           avgBreathSec: avg,
-          windowSec: 20,
+          windowSec: WINDOW_SEC,
           cycles: cycles.map(c => Number(c.dur.toFixed(3)))
         })
       });
@@ -173,10 +189,11 @@
         saveMsg.textContent = 'Saved ✅';
       } else {
         saveMsg.textContent = 'Save failed';
+        console.error('Save response', data);
       }
     } catch (e) {
       console.error(e);
-      saveMsg.textContent = 'Save error (check URL & deployment)';
+      saveMsg.textContent = 'Save error (check APPS_SCRIPT_URL & Console)';
     }
   });
 
