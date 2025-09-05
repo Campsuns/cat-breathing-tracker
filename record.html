@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cat Breath Logger — Record</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Cat Breath Logger</h1>
+    <nav>
+      <a href="record.html" aria-current="page">Record</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Record (20s sample)</h2>
+      <div class="controls">
+        <button id="startBtn" class="primary">Start 20s</button>
+        <div id="countdown" class="countdown">Ready</div>
+        <div class="status">
+          <div>Window: <span id="elapsed">0.0s</span> / 20s</div>
+          <div>Cycles: <span id="cycleCount">0</span></div>
+          <div>Press state: <span id="pressState">idle</span></div>
+          <div>BPM (preview): <span id="bpmPreview">0</span></div>
+        </div>
+      </div>
+
+      <div class="hold-wrap">
+        <button id="breathBtn" class="hold-btn" disabled>
+          <span id="breathBtnLabel">Press & Hold = Inhale</span>
+        </button>
+      </div>
+
+      <div id="result" class="result hidden">
+        <h3>Result</h3>
+        <div class="grid2">
+          <div><strong>Breaths per minute</strong><br/><span id="finalBpm">—</span></div>
+          <div><strong>Avg breath length (sec)</strong><br/><span id="finalAvg">—</span></div>
+        </div>
+        <div class="actions">
+          <button id="saveBtn" class="primary">Save to Sheet</button>
+          <button id="resetBtn" class="ghost">Reset</button>
+          <span id="saveMsg"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/record.js"></script>
+</body>
+</html>
