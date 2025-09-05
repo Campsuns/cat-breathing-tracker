@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cat Breath Tracker — Record</title>
+  <link rel="stylesheet" href="assets/style.css"/>
+  <script defer src="assets/config.js"></script>
+  <script defer src="assets/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Cat Breath Tracker</h1>
+    <nav><a href="dashboard.html">Dashboard</a></nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Record</h2>
+      <p class="muted">Press and hold for inhale; release for exhale. One press + release = 1 breath.</p>
+
+      <div class="timer">
+        <div id="countdown" class="countdown">Ready</div>
+        <button id="startBtn" class="btn primary">Start 20s Test</button>
+      </div>
+
+      <div class="press-area">
+        <button id="breathBtn" class="breath-btn" disabled>
+          <span id="breathBtnLabel">Hold = Inhale</span>
+        </button>
+        <div class="state">
+          <span>Status: <strong id="pressState">Idle</strong></span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Cycles</div>
+          <div class="value" id="cycleCount">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Elapsed</div>
+          <div class="value" id="elapsed">0.0s</div>
+        </div>
+        <div class="stat">
+          <div class="label">BPM (projected)</div>
+          <div class="value" id="bpmPreview">0</div>
+        </div>
+      </div>
+
+      <div id="result" class="result hidden">
+        <h3>Result</h3>
+        <p><strong>BPM:</strong> <span id="finalBpm">—</span></p>
+        <p><strong>Average Breath Length:</strong> <span id="finalAvg">—</span> s</p>
+        <button id="saveBtn" class="btn success">Save to Sheet</button>
+        <button id="resetBtn" class="btn">Reset</button>
+        <div id="saveMsg" class="muted"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
