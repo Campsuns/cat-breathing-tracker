@@ -1,9 +1,7 @@
 // js/api.js
-// Update this to your deployed Apps Script Web App URL
-const API_URL = "https://script.google.com/macros/s/AKfycbxH8wNUrHeWeq7jBrp-V-VzB1tS3ksaTxRIPhj1jVjjBQP35OHJzydasb990IHeQECT/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxH8wNUrHeWeq7jBrpVzB1tS3ksaTxRIPhj1jVjjBQP35OHJzydasb990IHeQECT/exec";
 
 async function apiGetLatest(limit = 30) {
-  // cache-bust param to avoid any cached proxies
   const url = `${API_URL}?action=latest&limit=${limit}&t=${Date.now()}`;
   const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error("Failed to fetch latest");
@@ -11,7 +9,7 @@ async function apiGetLatest(limit = 30) {
 }
 
 async function apiPostSample(payload) {
-  // IMPORTANT: use text/plain to avoid CORS preflight
+  // Use text/plain to avoid CORS preflight
   const res = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
